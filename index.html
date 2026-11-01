@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="el"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>INVéSTIA Properties X myma.ai — Price Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=GFS+Didot&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f2ea;--card:#fff;--ink:#2b3f5c;--mut:#6b778a;--gold:#b8975a;--pink:#ef4f8a;--mauve:#c07a92;--line:#e3dccd;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Montserrat,Arial,sans-serif;overflow-x:hidden}
+#app{width:100%;max-width:100%;margin:0 auto;min-width:0;color:var(--ink);background:var(--bg);font:14px/1.5 Montserrat,Arial,sans-serif;overflow-wrap:anywhere}
+#app *,#app *::before,#app *::after,#quote *,#quote *::before,#quote *::after{box-sizing:border-box}
+#app h1,#app h2,#app h3,#quote h1,#quote h2,#quote h3{font-family:'GFS Didot',Georgia,serif;font-weight:400;margin:0;text-transform:uppercase;letter-spacing:.08em}
+#app header{text-align:center;padding:30px 20px 14px;position:relative}
+#app .brand,#quote .brand{color:var(--gold);letter-spacing:.3em;font-size:12px;text-transform:uppercase}
+#app h1{font-size:clamp(21px,3vw,32px);margin:9px 0;line-height:1.25;color:var(--ink)}
+#app h1 b{color:var(--pink);font-weight:400}
+#app .sub{color:var(--mut);max-width:680px;margin:0 auto;font-size:13px}
+#app .lang{position:absolute;right:18px;top:calc(12px + env(safe-area-inset-top,0px));display:flex;gap:5px}
+#app button,#app select,#app input,#app textarea{font:inherit;color:inherit;max-width:100%}
+#app .lang button{border:1px solid var(--gold);background:none;padding:5px 11px;cursor:pointer;color:var(--ink);min-height:34px}
+#app .lang button.on{background:var(--gold);color:#fff}
+#app main{width:100%;max-width:1180px;margin:0 auto;padding:14px 20px 42px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){#app main{grid-template-columns:repeat(2,minmax(0,1fr))}#app .wide{grid-column:1/-1}}
+#app section{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);padding:20px;min-width:0;width:100%}
+#app h2{font-size:16px;color:var(--gold);margin-bottom:12px;line-height:1.35}
+#app label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:11px 0 5px;line-height:1.45}
+#app input[type=text],#app input[type=number],#app input[type=email],#app select,#app textarea{display:block;width:100%;min-width:0;padding:10px 11px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:2px;box-shadow:none;min-height:42px}
+#app .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;min-width:0}
+#app .chk{display:flex;gap:8px;align-items:center;margin:7px 0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--ink);line-height:1.45}
+#app .chk input{accent-color:var(--pink);width:17px;height:17px;min-width:17px;margin:0}
+#app .hint{font-size:11px;color:var(--mut);margin-top:5px;line-height:1.6}
+#app .warn{color:var(--pink)}
+#app .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:10px}
+#app .k{border:1px solid var(--line);padding:12px;text-align:center;min-width:0}
+#app .k small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+#app .k b{font-size:clamp(16px,2vw,20px);color:var(--ink);overflow-wrap:anywhere}
+#app .k.hl{background:var(--mauve);color:#fff;border-color:var(--mauve)}#app .k.hl small,#app .k.hl b{color:#fff}
+#app .tw{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+#app table{border-collapse:collapse;width:100%;font-size:12px}
+#app th,#app td{padding:8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+#app th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+#app th:first-child,#app td:first-child{text-align:left;white-space:normal;min-width:125px}
+#app .pos{color:var(--pink)}#app .neg{color:#2e8b57}
+#app .btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:var(--bg);border:0;padding:12px 22px;min-height:44px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;font-size:11px;margin-top:14px;max-width:100%;white-space:normal}
+#app .btn:hover{background:var(--pink);color:#fff}
+#app .f{display:grid;grid-template-columns:minmax(0,1fr) 90px 150px;gap:8px;align-items:center;margin:6px 0;font-size:12px}
+#app .two{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){#app .two{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#app #gbody{min-width:0}#app #gbody td input{width:68px;min-width:58px;text-align:right;padding:6px}#app #gbody td select{width:145px;min-width:120px;padding:6px}#app #gbody td input[type=checkbox]{width:auto;min-width:0}
+#app .src{font-size:10px;color:var(--mut);text-align:left!important;min-width:170px}
+#app tr.tot td{font-weight:600;border-top:2px solid var(--gold)}#app tr.hl td{background:var(--pink);color:#fff;font-weight:600}
+#quote{display:none;width:100%;max-width:100%;color:var(--ink);background:#fff;overflow-wrap:anywhere}
+#quote h1{font-size:20px;text-align:center}
+#quote .qh{text-align:center;border-bottom:2px solid var(--gold);padding-bottom:10px;margin-bottom:14px}
+#quote .qb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:14px;font-size:12px}
+#quote h3{font-size:12px;color:var(--gold);margin-bottom:4px}
+#quote .note{font-size:10px;color:#555;margin-top:12px}
+#gnote,#app .src{display:none}
+@media(max-width:640px){
+ #app header{padding:62px 14px 14px}
+ #app .lang{right:12px;top:10px}
+ #app .brand{font-size:10px;letter-spacing:.22em}
+ #app h1{font-size:23px}
+ #app .sub{font-size:12px}
+ #app main{padding:10px 12px 28px;gap:12px}
+ #app section{padding:16px 13px}
+ #app .g2{grid-template-columns:minmax(0,1fr);gap:0}
+ #app input[type=text],#app input[type=number],#app input[type=email],#app select{font-size:16px;min-height:46px}
+ #app .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #app .k{padding:9px 6px}
+ #app .k b{font-size:16px}
+ #app .f{grid-template-columns:minmax(0,1fr) 64px 105px;gap:5px;font-size:11px}
+ #app #gbody table{min-width:680px}
+ #app .btn{width:100%;padding:12px 14px}
+ #quote .qb{grid-template-columns:1fr}
+}
+@media(max-width:380px){#app .cards{grid-template-columns:1fr}#app .iv-never{display:none}}
+@media print{
+ body{background:#fff}
+ body.pg #app{display:none!important}
+ body.pg #quote{display:block!important;padding:0 12px;color:#2b3f5c;background:#fff}
+ #quote{display:block!important}
+ #quote table{width:100%;font-size:10px}
+ #quote th,#quote td{white-space:normal;padding:5px}
+ @page{margin:14mm}
+}
+</style></head><body>
+<div id="app">
+<header>
+ <div class="lang"><button id="bEL" onclick="setL('el')">ΕΛ</button><button id="bEN" onclick="setL('en')">EN</button></div>
+ <div class="brand">INVéSTIA Properties &nbsp;X&nbsp; myma.ai</div>
+ <h1 data-i="title"></h1><p class="sub" data-i="sub"></p>
+</header>
+<main>
+<section><h2 data-i="biz"></h2>
+ <label data-i="pname"></label><input type="text" id="pname" oninput="calc()">
+ <label data-i="legal"></label><input type="text" id="legal" oninput="calc()">
+ <div class="g2"><div><label data-i="afm"></label><input type="text" id="afm" oninput="calc()"></div>
+ <div><label data-i="addr"></label><input type="text" id="addr" oninput="calc()"></div></div>
+ <h2 style="margin-top:18px" data-i="contact"></h2>
+ <label data-i="cname"></label><input type="text" id="cname" oninput="calc()">
+ <div class="g2"><div><label>Email</label><input type="email" id="cmail" oninput="calc()"></div>
+ <div><label data-i="phone"></label><input type="text" id="cphone" oninput="calc()"></div></div>
+</section>
+<section><h2 data-i="prop"></h2>
+ <label data-i="type"></label><select id="type" onchange="calc()"></select>
+ <div class="g2"><div><label data-i="units"></label><input type="number" id="units" min="1" value="40" oninput="calc()"></div>
+ <div><label data-i="mode"></label><select id="mode" onchange="calc()"><option value="auto"></option><option value="alc"></option><option value="bun"></option></select></div></div>
+ <label data-i="sol"></label>
+ <label class="chk"><input type="checkbox" id="c_chat" checked onchange="calc()"><span data-i="chat"></span></label>
+ <label class="chk"><input type="checkbox" id="c_voice" checked onchange="calc()"><span data-i="voice"></span></label>
+ <label class="chk"><input type="checkbox" id="c_email" checked onchange="calc()"><span data-i="email"></span></label>
+ <label class="chk"><input type="checkbox" id="c_comp" onchange="calc()"><span data-i="comp"></span></label>
+ <label class="chk"><input type="checkbox" id="c_out" onchange="calc()"><span data-i="out"></span></label>
+ 
+ <hr style="border:0;border-top:1px solid var(--line)">
+ <label class="chk"><input type="checkbox" id="c_spaces" onchange="calc()"><span data-i="spaces"></span></label>
+ <label data-i="nsp"></label><input type="number" id="nsp" min="1" max="50" value="3" oninput="calc()">
+ <label class="chk"><input type="checkbox" id="c_aiva" onchange="calc()"><span>aiva — <span data-i="aiva"></span></span></label>
+ <p class="hint warn" data-i="notctr"></p>
+</section>
+
+<section class="wide"><h2 data-i="assump"></h2>
+ <div class="g2" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+ <div><label data-i="vinc"></label><input type="number" id="vinc" value="1000" min="0" oninput="calc()"></div>
+ <div><label data-i="vmin"></label><input type="number" id="vmin" value="1000" min="0" oninput="calc()"></div>
+ <div><label data-i="vrate"></label><input type="number" id="vrate" value="0.15" step="0.01" min="0" oninput="calc()"></div>
+ <div><label data-i="asales"></label><input type="number" id="asales" value="0" min="0" oninput="calc()"></div>
+ <div><label data-i="acomm"></label><input type="number" id="acomm" placeholder="%" step="0.5" min="0" oninput="calc()"></div>
+ <div><label data-i="amin"></label><input type="number" id="amin" placeholder="€" min="0" oninput="calc()"></div>
+ <div><label data-i="mopen"></label><input type="number" id="mopen" value="12" min="1" max="12" oninput="calc()"></div>
+ <div><label data-i="offfee"></label><select id="offfee" onchange="calc()"><option value="all"></option><option value="open"></option></select></div>
+ <div><label data-i="incg"></label><label class="chk"><input type="checkbox" id="incg" checked onchange="grow()"><span data-i="incg2"></span></label></div>
+ <div><label data-i="vreg"></label><select id="vreg" onchange="vatSel()"><option value="my"></option><option value="cu"></option></select></div>
+ <div><label data-i="qno"></label><input type="text" id="qno" oninput="calc()"></div>
+ <div><label data-i="qvalid"></label><input type="number" id="qvalid" value="30" min="0" oninput="calc()"></div>
+ <div><label data-i="qnot"></label><input type="number" id="qnot" min="0" oninput="calc()"></div>
+ <div style="grid-column:1/-1"><label data-i="qpay"></label><input type="text" id="qpay" oninput="calc()"></div>
+ <div><label data-i="vatp"></label><input type="number" id="vat" value="24" min="0" step="0.5" oninput="calc()"></div>
+ <div><label data-i="vatsec"></label><label class="chk"><input type="checkbox" id="vaton" onchange="calc()"><span data-i="vaton"></span></label></div>
+ <div><label data-i="disc"></label><label class="chk"><input type="checkbox" id="dison" onchange="calc()"><span data-i="dison"></span></label><input type="number" id="disp" value="10" min="0" max="100" step="0.5" oninput="calc()"></div>
+ <div><label data-i="discsc"></label><label class="chk"><input type="checkbox" id="dis_s" checked onchange="calc()"><span data-i="dis_s"></span></label><label class="chk"><input type="checkbox" id="dis_m" checked onchange="calc()"><span data-i="dis_m"></span></label></div>
+ </div><p class="hint" data-i="ahint"></p>
+</section>
+<section class="wide"><h2 data-i="res"></h2><div id="out"></div>
+ <div id="offers" style="display:none"></div>
+ <button class="btn" onclick="window.print()" data-i="pdf"></button>
+ <p class="hint" data-i="pdfh"></p></section>
+<section class="wide"><h2 data-i="cmp"></h2><div class="tw" id="cmp"></div><p class="hint" data-i="cmph"></p></section>
+
+
+<section class="wide" id="gsec"><h2 id="gh"></h2><div id="gbody"></div></section>
+</main></div>
+<div id="quote"></div>
+<script>
+const $=id=>document.getElementById(id);
+let L='el';
+const T={en:{
+title:'myma.ai <b>Price</b> Calculator',sub:'Build an itemised offer for hospitality, leisure and business clients, then export it as a PDF.',
+biz:'Business details',pname:'Property / business name',legal:'Legal name',afm:'VAT / Tax ID',addr:'Address',contact:'Contact person',cname:'Full name',phone:'Phone',
+prop:'Property & solutions',type:'Business type & size',units:'Units / rooms',mode:'Pricing mode',auto:'Auto (cheapest over 12 months)',alc:'Individual solutions',bun:'Bundle',
+sol:'myma.ai AI solutions',chat:'AI Chatbot (website & social)',voice:'Premium Voice AI',email:'AI Email Assistant',comp:'In-Room Digital Compendium',out:'Outbound Guest Messaging',
+spaces:'SpacesBooking (smart space rental)',nsp:'Number of spaces',aiva:'voucher & e-gifting platform',
+assump:'Settings & pricing assumptions',vinc:'Voice minutes included / month',vmin:'Expected voice minutes / month',vrate:'Extra voice rate (€/min)',asales:'aiva: expected monthly voucher sales (€)',vatp:'VAT rate (%)',vatsec:'VAT',vaton:'Add VAT to totals',
+ahint:'Assumptions I could not confirm from the price list: included Voice minutes (brochure says 1000/month), the VAT rate, and aiva commission on expected sales (charged only above the minimum monthly fee).',
+res:'Offer summary',setup:'One-off setup',monthly:'Monthly subscription',year:'12-month estimate (no commitment)',net:'Net',vatl:'VAT',gross:'Total incl. VAT',
+pdf:'Export PDF offer',pdfh:'Opens your browser print dialog – choose “Save as PDF”.',
+cmp:'Comparison: price list vs calculator',cmph:'List = standard price-list tier per solution. Calculator = after bundle allocation, Voice overage and aiva commission. Δ = calculator − list.',
+s:'Solution',ls:'List setup',lm:'List monthly',cs:'Calc. setup',cm:'Calc. monthly',ds:'Δ setup',dm:'Δ monthly',tot:'Total',
+q:'Price offer',qc:'Prepared for',qf:'Prepared by',date:'Date',item:'Solution',qty:'Qty',
+n1:'Indicative offer. Meta/WhatsApp fees and SMS charges are not included. POS integration for aiva is not included.',
+n2:'Casino / Integrated Resort prices are “from” prices and require a custom quote.',
+mb:'Bundle applied',ma:'Individual pricing applied',min:'min',disc:'Group discount (%)',dison:'Apply hotel-group discount',discsc:'Discount applies to',dis_s:'Setup',dis_m:'Monthly fees',dlabel:'Group discount',term:'Month-to-month agreement, no minimum commitment.',acomm:'aiva commission charged to hotel (%, you set it; blank = list rate)',amin:'aiva minimum monthly fee charged to hotel (€, blank = list)',stripe:'aiva payments go through the hotel’s own Stripe/PayPal account; account approval is outside our control.',mopen:'Months open per year',offfee:'Fees in off-season months',offall:'Charged all 12 months',offopen:'Charged only months open (confirm with provider)',incg:'PDF content',incg2:'Include growth estimate in the PDF',rec:'Recurring total',mon_:'months',incvat:'incl. VAT',setupnote:'Setup is a one-off fee, not repeated every year, and is not included in the recurring total.',acn:'commission on voucher sales above the minimum monthly fee:',vreg:'VAT regime',vgr:'Client in Greece – 24%',vrc:'Business in another EU state – reverse charge 0%',vneu:'Client outside the EU – 0% (verify)',vcu:'Custom rate',qno:'Offer number',qvalid:'Offer valid (days)',qnot:'Cancellation notice (days)',qpay:'Payment terms (printed as written)',imp:'Import hotel data (from the hotel form)',impb:'Import',terms:'Terms',validuntil:'Valid until',noticeT:'Cancellation notice',payT:'Payment',vmy:'Invoiced by Myma – prices excl. VAT (taxes per Myma invoice)',vmynote:'Prices exclude VAT and other taxes; applicable taxes are determined on Myma’s invoice.',tmyma:'Indicative proposal prepared by INVéSTIA Properties. The service agreement, invoicing and payment are between the hotel and Myma International Limited.',synx:'Hotel uses the Aven Hospitality SynXis booking engine',synxh:'Partner agreement: chatbot, voice and email may not be actively marketed to these hotels.',rcnote:'Reverse charge: VAT is accounted for by the recipient, subject to a valid EU VAT number.',accT:'Expression of interest (non-binding)',accN:'Name / title',accD:'Date',accS:'Signature and stamp'},
+el:{
+title:'Υπολογιστης <b>Τιμων</b> myma.ai',sub:'Δημιουργήστε αναλυτική προσφορά για επιχειρήσεις φιλοξενίας και ελεύθερου χρόνου και εξάγετέ την σε PDF.',
+biz:'Στοιχεία επιχείρησης',pname:'Επωνυμία καταλύματος / επιχείρησης',legal:'Νομική επωνυμία',afm:'ΑΦΜ',addr:'Διεύθυνση',contact:'Υπεύθυνος επικοινωνίας',cname:'Ονοματεπώνυμο',phone:'Τηλέφωνο',
+prop:'Μονάδα & λύσεις',type:'Τύπος & μέγεθος επιχείρησης',units:'Μονάδες / δωμάτια',mode:'Τρόπος τιμολόγησης',auto:'Αυτόματα (φθηνότερο σε 12 μήνες)',alc:'Μεμονωμένες λύσεις',bun:'Bundle',
+sol:'Λύσεις AI myma.ai',chat:'AI Chatbot (ιστοσελίδες & κοινωνικά δίκτυα)',voice:'Premium Φωνητικό AI',email:'AI Email Γραμματειακή υποστήριξη',comp:'In-Room Digital Compendium (Ψηφιακός Οδηγός)',out:'Outbound Guest Messaging',
+spaces:'SpacesBooking (έξυπνη ενοικίαση χώρων)',nsp:'Αριθμός χώρων',aiva:'πλατφόρμα voucher & e-gifting',
+assump:'Ρυθμίσεις & παραδοχές τιμολόγησης',vinc:'Περιλαμβανόμενα λεπτά Voice / μήνα',vmin:'Εκτιμώμενα λεπτά Voice / μήνα',vrate:'Χρέωση επιπλέον λεπτού (€/λεπτό)',asales:'aiva: εκτιμώμενες μηνιαίες πωλήσεις voucher (€)',vatp:'Συντελεστής ΦΠΑ (%)',vatsec:'ΦΠΑ',vaton:'Προσθήκη ΦΠΑ στα σύνολα',
+ahint:'Παραδοχές που δεν επιβεβαιώνονται από τον τιμοκατάλογο: τα περιλαμβανόμενα λεπτά Voice (το φυλλάδιο γράφει 1000/μήνα), ο συντελεστής ΦΠΑ και η προμήθεια aiva επί των αναμενόμενων πωλήσεων (χρεώνεται μόνο πάνω από το ελάχιστο μηνιαίο τέλος).',
+res:'Σύνοψη προσφοράς',setup:'Εφάπαξ εγκατάσταση',monthly:'Μηνιαία συνδρομή',year:'Εκτίμηση 12 μηνών (χωρίς δέσμευση)',net:'Καθαρή αξία',vatl:'ΦΠΑ',gross:'Σύνολο με ΦΠΑ',
+pdf:'Εξαγωγή προσφοράς PDF',pdfh:'Ανοίγει το παράθυρο εκτύπωσης του browser – επιλέξτε «Αποθήκευση ως PDF».',
+cmp:'Σύγκριση: τιμοκατάλογος και υπολογιστής',cmph:'Τιμοκατάλογος = βασική τιμή κλιμακίου ανά λύση. Υπολογιστής = μετά από κατανομή bundle, υπέρβαση Voice και προμήθεια aiva. Δ = υπολογιστής − τιμοκατάλογος.',
+s:'Λύση',ls:'Εγκατ. τιμοκ.',lm:'Μηνιαίο τιμοκ.',cs:'Εγκατ. υπολογ.',cm:'Μηνιαίο υπολογ.',ds:'Δ εγκατάστασης',dm:'Δ μηνιαίου',tot:'Σύνολο',
+q:'Προσφορά τιμών',qc:'Προς',qf:'Από',date:'Ημερομηνία',item:'Λύση',qty:'Ποσότητα',
+n1:'Ενδεικτική προσφορά. Δεν περιλαμβάνονται τέλη Meta/WhatsApp και χρεώσεις SMS. Δεν περιλαμβάνεται η διασύνδεση POS για το aiva.',
+n2:'Οι τιμές Casino / Integrated Resort είναι τιμές «από» και απαιτούν εξατομικευμένη προσφορά.',
+mb:'Εφαρμόστηκε bundle',ma:'Εφαρμόστηκε μεμονωμένη τιμολόγηση',min:'λεπτά',disc:'Έκπτωση ομίλου (%)',dison:'Εφαρμογή έκπτωσης ομίλου ξενοδοχείων',discsc:'Η έκπτωση ισχύει για',dis_s:'Εγκατάσταση',dis_m:'Μηνιαίες συνδρομές',dlabel:'Έκπτωση ομίλου',term:'Συμφωνία μήνα-με-μήνα, χωρίς ελάχιστη δέσμευση.',acomm:'Προμήθεια aiva προς το ξενοδοχείο (%, την ορίζεις εσύ· κενό = τιμοκατάλογος)',amin:'Ελάχιστο μηνιαίο τέλος aiva προς το ξενοδοχείο (€, κενό = τιμοκατάλογος)',stripe:'Οι πληρωμές aiva περνούν από τον δικό του λογαριασμό Stripe/PayPal του ξενοδοχείου· η έγκριση του λογαριασμού είναι εκτός ελέγχου μας.',mopen:'Μήνες λειτουργίας ανά έτος',offfee:'Χρεώσεις εκτός σεζόν',offall:'Χρέωση και τους 12 μήνες',offopen:'Χρέωση μόνο τους μήνες λειτουργίας (επιβεβαίωση με πάροχο)',incg:'Περιεχόμενο PDF',incg2:'Συμπερίληψη εκτίμησης ανάπτυξης στο PDF',rec:'Επαναλαμβανόμενο σύνολο',mon_:'μήνες',incvat:'με ΦΠΑ',setupnote:'Η εγκατάσταση είναι εφάπαξ, δεν επαναλαμβάνεται κάθε έτος και δεν περιλαμβάνεται στο επαναλαμβανόμενο σύνολο.',acn:'προμήθεια επί πωλήσεων voucher πάνω από το ελάχιστο μηνιαίο τέλος:',vreg:'Καθεστώς ΦΠΑ',vgr:'Πελάτης στην Ελλάδα – 24%',vrc:'Επιχείρηση σε άλλο κράτος της ΕΕ – αντίστροφη χρέωση 0%',vneu:'Πελάτης εκτός ΕΕ – 0% (προς επιβεβαίωση)',vcu:'Προσαρμοσμένος συντελεστής',qno:'Αριθμός προσφοράς',qvalid:'Ισχύς προσφοράς (ημέρες)',qnot:'Προειδοποίηση λήξης (ημέρες)',qpay:'Όροι πληρωμής (εκτυπώνονται όπως γράφονται)',imp:'Εισαγωγή στοιχείων ξενοδοχείου (από τη φόρμα του ξενοδοχείου)',impb:'Εισαγωγή',terms:'Όροι',validuntil:'Ισχύει έως',noticeT:'Προειδοποίηση λήξης',payT:'Πληρωμή',vmy:'Τιμολόγηση από τη Myma – τιμές χωρίς ΦΠΑ (φόροι βάσει τιμολογίου Myma)',vmynote:'Οι τιμές δεν περιλαμβάνουν ΦΠΑ και λοιπούς φόρους· οι ισχύοντες φόροι καθορίζονται στο τιμολόγιο της Myma.',tmyma:'Ενδεικτική πρόταση της INVéSTIA Properties. Η σύμβαση παροχής υπηρεσιών, η τιμολόγηση και η πληρωμή γίνονται μεταξύ του ξενοδοχείου και της Myma International Limited.',synx:'Το ξενοδοχείο χρησιμοποιεί τη μηχανή κρατήσεων Aven Hospitality SynXis',synxh:'Συμφωνία συνεργασίας: chatbot, voice και email δεν επιτρέπεται να προωθούνται ενεργά σε αυτά τα ξενοδοχεία.',rcnote:'Αντίστροφη χρέωση: ο ΦΠΑ λογιστικοποιείται από τον αποδέκτη, εφόσον υπάρχει έγκυρο ΑΦΜ ΕΕ.',accT:'Εκδήλωση ενδιαφέροντος (μη δεσμευτική)',accN:'Ονοματεπώνυμο / ιδιότητα',accD:'Ημερομηνία',accS:'Υπογραφή και σφραγίδα'}};
+// setup [per AI, bundle of 3, each extra AI], aiva [setup, min monthly, commission %]
+const TY=[
+{en:'Villa / Boutique Hotel / Small Property (1–9)',el:'Βίλα / Boutique Ξενοδοχείο / Μικρή Μονάδα (1–9)',s:[800,1200,400],a:[100,0,9]},
+{en:'Hotel with standard services like pool (10–74)',el:'Ξενοδοχείο με βασικές υπηρεσίες π.χ. πισίνα (10–74)',s:[1200,1800,600],a:[500,100,7]},
+{en:'Hotel with standard services like pool (75–200)',el:'Ξενοδοχείο με βασικές υπηρεσίες π.χ. πισίνα (75–200)',s:[1500,2250,750],a:[500,100,7]},
+{en:'Full-service hotel: restaurants, spa (10–74)',el:'Ξενοδοχείο πλήρους εξυπηρέτησης: εστιατόρια, spa (10–74)',s:[1500,2250,750],a:[800,100,7]},
+{en:'Full-service hotel: restaurants, spa (75–200)',el:'Ξενοδοχείο πλήρους εξυπηρέτησης: εστιατόρια, spa (75–200)',s:[2000,3500,1000],a:[1200,100,7]},
+{en:'Big Hotel / Resort (201+)',el:'Μεγάλο Ξενοδοχείο / Resort (201+)',s:[3800,7000,1900],a:[2000,200,7]},
+{en:'Restaurant / Café business',el:'Εστιατόριο / Καφέ',s:[1500,2250,750],a:[200,0,9]},
+{en:'Spa / Wellness business',el:'Spa / Wellness',s:[1500,2250,750],a:[200,0,9]},
+{en:'Casino / Integrated Resort (from-prices)',el:'Casino / Integrated Resort (τιμές «από»)',s:[5000,15000,2500],a:[2000,200,7],casino:1}];
+const AI=['chat','voice','email','comp','out'];
+const tier=(x,a,b,c)=>x<=9?a:x<=200?b:b+c*(x-200);
+const n=id=>Math.max(0,+$(id).value||0);
+const t=k=>T[L][k];
+const f=v=>new Intl.NumberFormat(L=='el'?'el-GR':'en-IE',{style:'currency',currency:'EUR'}).format(v);
+const fd=v=>Math.abs(v)<.005?'—':`<span class="${v>0?'pos':'neg'}">${v>0?'+':''}${f(v)}</span>`;
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function setL(l){L=l;document.documentElement.lang=l;$('bEL').className=l=='el'?'on':'';$('bEN').className=l=='en'?'on':'';
+ document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=t(e.dataset.i));
+ const cur=$('type').value||'1';$('type').innerHTML=TY.map((x,i)=>`<option value="${i}">${x[l]}</option>`).join('');$('type').value=cur;
+ const m=$('mode').options;m[0].text=t('auto');m[1].text=t('alc');m[2].text=t('bun');const o=$('offfee').options;o[0].text=t('offall');o[1].text=t('offopen');const vo=$('vreg').options;vo[0].text=t('vmy');vo[1].text=t('vcu');offUI();svTxt();gbuild();calc()}
+function calc(){
+ const ty=TY[+$('type').value],x=Math.max(1,n('units')),sel=AI.filter(k=>$('c_'+k).checked),k=sel.length;
+ const lm=tier(x,100,275,1.5),ls=ty.s[0],rate=$('acomm').value===''?ty.a[2]:+$('acomm').value,amn=$('amin').value===''?ty.a[1]:+$('amin').value;
+ const bm=k>=3?tier(x,225,600,2.5)+(k-3)*tier(x,75,200,1):0,bs=k>=3?ty.s[1]+(k-3)*ty.s[2]:0;
+ let mode=$('mode').value;
+ if(k<3)mode='alc';else if(mode=='auto')mode=bs+12*bm<=k*ls+12*k*lm?'bun':'alc';
+ const B=mode=='bun',rows=[];
+ sel.forEach(key=>{let ex=key=='voice'?Math.max(0,n('vmin')-n('vinc'))*n('vrate'):0;
+  rows.push({name:t(key),q:1,ls:ls,lm:lm,cs:B?bs/k:ls,cm:(B?bm/k:lm)+ex})});
+ if($('c_spaces').checked){const s=Math.max(1,n('nsp')),m=s==1?50:40+20*s;
+  rows.push({name:'SpacesBooking',q:s,ls:100*s,lm:m,cs:100*s,cm:m})}
+ if($('c_aiva').checked){const m=Math.max(amn,rate/100*n('asales'));
+  rows.push({name:'aiva',q:1,ls:ty.a[0],lm:ty.a[1],cs:ty.a[0],cm:m})}
+ const dv=$('dison').checked?Math.min(100,n('disp'))/100:0;rows.forEach(r=>{if($('dis_s').checked)r.cs*=1-dv;if($('dis_m').checked)r.cm*=1-dv});
+ const sum=p=>rows.reduce((a,r)=>a+r[p],0),S=sum('cs'),M=sum('cm');
+ const mc=Math.min(12,Math.max(1,n('mopen')||12)),chM=$('offfee').value=='open'?mc:12,Y=M*chM,vr=$('vaton').checked?n('vat')/100:0;
+ const bad=!rows.length;
+ const kv=(l,v,c)=>`<div class="k${c||''}"><small>${l}</small><b>${f(v)}</b>${vr?`<small>${f(v*(1+vr))} ${t('incvat')}</small>`:''}</div>`;
+ let h=`<div class="cards">${kv(t('setup')+' · '+t('net'),S)}${kv(t('monthly')+' · '+t('net'),M)}${kv(t('rec')+' × '+chM+' '+t('mon_'),Y,' hl')}</div>
+ <p class="hint">${t('setupnote')} ${k>=3?(B?t('mb'):t('ma')):''} ${dv?t('dlabel')+' −'+n('disp')+'%. ':''}${t('term')} ${ty.casino?`<span class="warn">${t('n2')}</span>`:''}</p>`;
+ $('out').innerHTML=h;
+ let c=`<table><tr><th>${t('s')}</th><th>${t('ls')}</th><th>${t('lm')}</th><th>${t('cs')}</th><th>${t('cm')}</th><th>${t('ds')}</th><th>${t('dm')}</th></tr>`;
+ rows.forEach(r=>c+=`<tr><td>${r.name}${r.q>1?' ×'+r.q:''}</td><td>${f(r.ls)}</td><td>${f(r.lm)}</td><td>${f(r.cs)}</td><td>${f(r.cm)}</td><td>${fd(r.cs-r.ls)}</td><td>${fd(r.cm-r.lm)}</td></tr>`);
+ c+=`<tr><td><b>${t('tot')}</b></td><td><b>${f(sum('ls'))}</b></td><td><b>${f(sum('lm'))}</b></td><td><b>${f(S)}</b></td><td><b>${f(M)}</b></td><td>${fd(S-sum('ls'))}</td><td>${fd(M-sum('lm'))}</td></tr></table>`;
+ $('cmp').innerHTML=c;
+ // PDF quote
+ const d=new Date().toLocaleDateString(L=='el'?'el-GR':'en-GB');
+ let q=`<div class="qh"><div class="brand">INVéSTIA Properties &nbsp;X&nbsp; myma.ai</div><h1>${t('q')}</h1><div style="font-size:11px">${t('date')}: ${d}${$('qno').value?' · '+t('qno')+': '+esc($('qno').value):''}</div></div>
+ <div class="qb"><div><h3>${t('qc')}</h3><b>${esc($('pname').value)}</b><br>${esc($('legal').value)}<br>${$('afm').value?t('afm')+': '+esc($('afm').value)+'<br>':''}${esc($('addr').value)}<br>${esc($('cname').value)}<br>${esc($('cmail').value)} ${esc($('cphone').value)}<br>${esc(TY[+$('type').value][L])} · ${x} ${t('units')}</div>
+ <div><h3>${t('qf')}</h3><b>INVéSTIA Properties L.P.</b><br>Μαρία Σταματάκη / Maria Stamataki<br>mnstamataki@investiaprop.com<br>0030 693 222 4 111<br>www.investiaprop.com</div></div>
+ <table><tr><th>${t('item')}</th><th>${t('qty')}</th><th>${t('setup')}</th><th>${t('monthly')}</th></tr>`;
+ rows.forEach(r=>q+=`<tr><td>${r.name}</td><td>${r.q}</td><td>${f(r.cs)}</td><td>${f(r.cm)}</td></tr>`);
+ q+=`<tr><td><b>${t('tot')} (${t('net')})</b></td><td></td><td><b>${f(S)}</b></td><td><b>${f(M)}</b></td></tr></table>
+ <table style="width:62%;margin-left:auto;margin-top:10px"><tr><td>${t('setup')} (${t('net')})</td><td>${f(S)}</td></tr>${vr?`<tr><td>${t('setup')} ${t('incvat')} ${n('vat')}%</td><td>${f(S*(1+vr))}</td></tr>`:''}
+ <tr><td>${t('monthly')} (${t('net')})</td><td>${f(M)}</td></tr>${vr?`<tr><td>${t('monthly')} ${t('incvat')}</td><td>${f(M*(1+vr))}</td></tr>`:''}
+ <tr><td><b>${t('rec')} × ${chM} ${t('mon_')} (${t('net')})</b></td><td><b>${f(Y)}</b></td></tr>${vr?`<tr><td><b>${t('rec')} ${t('incvat')}</b></td><td><b>${f(Y*(1+vr))}</b></td></tr>`:''}</table>
+ <p class="note">${t('setupnote')} ${k>=3?(B?t('mb'):t('ma'))+'. ':''}${dv?t('dlabel')+' −'+n('disp')+'%. ':''}${t('term')} ${$('c_aiva').checked?'aiva: '+t('acn')+' '+rate+'%. '+t('stripe')+' ':''}${$('c_voice').checked?`Voice AI: ${n('vinc')} ${t('min')}/${L=='el'?'μήνα':'month'}, +${f(n('vrate'))}/${t('min')}. `:''}${t('n1')} ${ty.casino?t('n2'):''}</p>`;
+ q+=svcHTML();q+=termsHTML();$('quote').innerHTML=q;QB=q;GS=S+svc().so;GM=M-(rows.find(r=>r.name=='aiva')||{cm:0}).cm+svc().sm;GA=[ty.a[0],amn,rate];GN=mc;GF=chM;GD=$('dis_m').checked?dv:0;grow()}
+let GS=0,GM=0,GA=[0,0,0],GD=0,GN=12,GF=12,QB='',GQ='';
+const P=s=>s.split('|')[L=='el'?1:0],fm=v=>new Intl.NumberFormat(L=='el'?'el-GR':'en-IE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
+const GB=[['occ','Occupancy %|Πληρότητα %',65,'h'],['adr','ADR (€)|ADR – μέση τιμή δωματίου (€)',140,'h'],['ota','OTA commission %|Προμήθεια OTA %',18,'h'],['dcost','Direct-booking cost % (engine, payments, ads)|Κόστος απευθείας κράτησης % (engine, πληρωμές, διαφήμιση)',5,'e'],['alos','Avg. stay (nights)|Μέση διαμονή (διανυκτ.)',3,'h'],['conv','Guest conversations / open month|Συνομιλίες επισκεπτών / μήνα λειτουργίας',800,'h'],['mins','Staff minutes per conversation|Λεπτά προσωπικού ανά συνομιλία',4,'e'],['hr','Staff cost (€/h)|Κόστος προσωπικού (€/ώρα)',12,'h'],['fcost','Employer cost per FTE (€/month)|Κόστος εργοδότη ανά θέση (€/μήνα)',1800,'h'],['miss','Missed inquiries / open month (calls, late replies)|Χαμένα αιτήματα / μήνα λειτουργίας (κλήσεις, αργές απαντήσεις)',60,'h'],['mconv','Booking rate of a recovered inquiry %|Ποσοστό κράτησης ανακτημένου αιτήματος %',10,'e'],['gv','Avg. group booking (€)|Μέση ομαδική κράτηση (€)',3000,'h'],['gc','Group lead conversion %|Μετατροπή group leads %',20,'e'],['flow','Flow-through on extra revenue %|Περιθώριο κέρδους σε πρόσθετα έσοδα %',35,'e'],['vm','Voucher margin %|Περιθώριο voucher %',15,'e'],['ev','Avg. experience price (€)|Μέση τιμή εμπειρίας (€)',120,'e'],['ec','Your margin on experiences %|Περιθώριο στις εμπειρίες %',15,'e'],['ramp','Ramp-up months to full effect|Μήνες ramp-up έως πλήρη απόδοση',2,'e']];
+const GSC=[['pp','Direct-booking share shift (pp)|Μετατόπιση σε απευθείας κρατήσεις (pp)',[1,2,4],'No attributable case-study data.|Κανένα αποδιδόμενο δεδομένο case study.',1],['au','Conversations automated %|Αυτοματοποιημένες συνομιλίες %',[40,60,75],'Brochure: ≥20% fewer calls (expectation).|Φυλλάδιο: ≥20% λιγότερες κλήσεις (προσδοκία).',1],['fte','FTE avoided (only with FTE method)|Θέσεις προσωπικού που αποφεύγονται (μόνο με μέθοδο FTE)',[0,0.25,0.5],'Only real if you do not hire.|Ισχύει μόνο αν δεν προσλάβετε.',0],['ld','Extra group leads / open month|Επιπλέον group leads / μήνα λειτουργίας',[0.5,1,3],'Case study: 23 leads in 7 months, not incremental.|Case study: 23 leads σε 7 μήνες, όχι επιπλέον.',1],['an','Ancillary uplift % of room revenue|Αύξηση πρόσθετων εσόδων % των εσόδων δωματίων',[0.5,1,2],'No data.|Κανένα δεδομένο.',1],['vs','Voucher sales / open month (€)|Πωλήσεις voucher / μήνα λειτουργίας (€)',[500,1500,4000],'No data.|Κανένα δεδομένο.',1],['er','Guests booking a curated experience %|Επισκέπτες που κλείνουν επιμελημένη εμπειρία %',[1,3,6],'No data (new offer).|Κανένα δεδομένο (νέα υπηρεσία).',1],['rec','Missed inquiries recovered %|Χαμένα αιτήματα που ανακτώνται %',[15,30,50],'Case study logic, no figures.|Λογική case study, χωρίς νούμερα.',1],['cap','Guests who consent to contact %|Επισκέπτες που δίνουν συγκατάθεση επικοινωνίας %',[10,20,30],'Case study: 1,500 contacts, period unclear.|Case study: 1.500 επαφές, περίοδος ασαφής.',1],['rep','Consented guests who rebook %|Επισκέπτες με συγκατάθεση που ξανακλείνουν %',[1,2,4],'No data.|Κανένα δεδομένο.',0]];
+const LV=['Direct bookings: OTA commission saved, net of direct cost|Απευθείας κρατήσεις: εξοικονόμηση προμήθειας OTA, μετά το κόστος|','Staff time or position saved|Εξοικονόμηση χρόνου ή θέσης προσωπικού|','Group & event leads|Group & event leads|','Digital ancillary upselling|Digital upselling πρόσθετων υπηρεσιών|','Vouchers & e-gifting (net of platform fee)|Vouchers & e-gifting (καθαρά τελών πλατφόρμας)|','Curated cultural experiences|Επιμελημένες πολιτιστικές εμπειρίες|','Recovered missed inquiries|Ανακτημένα χαμένα αιτήματα|','Repeat guests (remarketing)|Επαναλαμβανόμενοι επισκέπτες (remarketing)|'].map(x=>x.slice(0,-1));
+const LK=['pp','au','ld','an','vs','er','rec','cap'];
+const MN='Jan|Ιαν,Feb|Φεβ,Mar|Μαρ,Apr|Απρ,May|Μάι,Jun|Ιουν,Jul|Ιουλ,Aug|Αυγ,Sep|Σεπ,Oct|Οκτ,Nov|Νοε,Dec|Δεκ'.split(','),PO=[0,0,0,40,60,75,90,92,80,55,0,0],PA=[0,0,0,100,120,150,200,210,160,110,0,0],DM=[31,28,31,30,31,30,31,31,30,31,30,31];
+const COND=`1. The hotel provides accurate property data (occupancy, ADR, guest conversation volume, staff cost) and approves the assumptions in writing.
+2. The website and booking engine are connected, so guests can be guided to direct booking.
+3. Hotel staff handle escalated requests and group/event leads within an agreed time.
+4. Upselling, voucher and experience offers are actively promoted at the property and online.
+5. The property keeps its information up to date (rates, services, events).
+6. Myma.ai provides onboarding and platform support. INVéSTIA Properties is the hotel’s point of contact and reviews results with the hotel at an agreed frequency.|1. Το ξενοδοχείο παρέχει ακριβή στοιχεία (πληρότητα, ADR, όγκο συνομιλιών, κόστος προσωπικού) και εγκρίνει γραπτά τις παραδοχές.
+2. Η ιστοσελίδα και η μηχανή κρατήσεων είναι συνδεδεμένες, ώστε οι επισκέπτες να οδηγούνται σε απευθείας κράτηση.
+3. Το προσωπικό διαχειρίζεται τα escalations και τα group/event leads εντός συμφωνημένου χρόνου.
+4. Οι προσφορές upselling, voucher και εμπειριών προωθούνται ενεργά στη μονάδα και online.
+5. Η μονάδα ενημερώνει τις πληροφορίες της (τιμές, υπηρεσίες, εκδηλώσεις).
+6. Η Myma.ai παρέχει το onboarding και την υποστήριξη της πλατφόρμας. Η INVéSTIA Properties είναι το σημείο επαφής του ξενοδοχείου και εξετάζει τα αποτελέσματα με αυτό σε συμφωνημένη συχνότητα.`;
+const srcL=v=>v=='h'?P('Hotel data (to be confirmed by the hotel)|Στοιχεία μονάδας (επιβεβαιώνονται από το ξενοδοχείο)'):P('INVéSTIA estimate|Εκτίμηση INVéSTIA');
+function gbuild(){
+const old={};document.querySelectorAll('#gbody input,#gbody select,#gbody textarea').forEach(e=>old[e.id]=e.type=='checkbox'?e.checked:(e.tagName=='TEXTAREA'&&!e.dataset.d?null:e.value));
+const sel=(id,v)=>`<select id='g_s_${id}' onchange='grow()'><option value='h'${v=='h'?' selected':''}>${P('Hotel data|Στοιχεία μονάδας')}</option><option value='e'${v=='e'?' selected':''}>${P('INVéSTIA estimate|Εκτίμηση INVéSTIA')}</option></select>`;
+const inp=a=>a.map(x=>`<div class='f'><span>${P(x[1])}</span><input type='number' step='any' id='g_${x[0]}' value='${x[2]}' oninput='grow()'>${sel(x[0],x[3])}</div>`).join('');
+$('gh').textContent=P('Growth estimate – linked to the pricing above|Εκτίμηση ανάπτυξης – συνδεδεμένη με την τιμολόγηση παραπάνω');
+$('gbody').innerHTML=`<p class='hint'>${P('Rooms, selected solutions, discount and fees come from the calculator above. A lever switches off if its solution is not selected or its box is unticked. For each assumption choose whether it is hotel data or your estimate; the PDF shows this.|Τα δωμάτια, οι λύσεις, η έκπτωση και τα τέλη προέρχονται από τον υπολογιστή παραπάνω. Ένας παράγοντας κέρδους απενεργοποιείται αν δεν έχει επιλεγεί η λύση του ή αν ξετσεκάρεις το κουτί του. Για κάθε παραδοχή επέλεξε αν είναι στοιχείο της μονάδας ή δική σου εκτίμηση· το PDF το δείχνει.')}</p><div class='two'><div>${inp(GB)}</div><div><label class='chk'><input type='checkbox' id='g_cdi' onchange='grow()'><span>${P('Include Cultural & Destination Intelligence|Συμπερίληψη Cultural & Destination Intelligence')}</span></label><label>${P('Staff savings method|Μέθοδος εξοικονόμησης προσωπικού')}</label><select id='g_smeth' onchange='grow()'><option value='h'>${P('Hours saved × staff cost|Ώρες που εξοικονομούνται × κόστος')}</option><option value='f'>${P('Position avoided (FTE) – never both|Θέση που αποφεύγεται (FTE) – ποτέ και τα δύο')}</option></select><details style='margin-top:10px'><summary>${P('Month-by-month occupancy and ADR (optional, replaces the averages)|Πληρότητα και ADR ανά μήνα (προαιρετικά, αντικαθιστά τους μέσους όρους)')}</summary><label class='chk'><input type='checkbox' id='g_prof' onchange='grow()'><span>${P('Use monthly profile (example values are placeholders)|Χρήση μηνιαίου προφίλ (οι τιμές-παράδειγμα είναι placeholders)')}</span></label><table><tr><th></th><th>Occ %</th><th>ADR €</th></tr>${MN.map((m,i)=>`<tr><td>${P(m)}</td><td><input type='number' id='g_po${i}' value='${PO[i]}' oninput='grow()'></td><td><input type='number' id='g_pa${i}' value='${PA[i]}' oninput='grow()'></td></tr>`).join('')}</table></details><div id='glink' class='hint'></div></div></div><div><h2 style='margin-top:14px'>${P('Success conditions (shown in the PDF)|Προϋποθέσεις επιτυχίας (εμφανίζονται στο PDF)')}</h2><textarea id='g_cond' rows='8' style='width:100%;padding:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit' oninput='this.dataset.d=1;grow()'>${esc(P(COND))}</textarea><p class='hint'>${P('Only list what the hotel and you actually commit to.|Γράψε μόνο ό,τι δεσμεύεται πραγματικά το ξενοδοχείο και εσύ.')}</p></div><div class='tw'><table><tr><th></th><th></th><th>${P('Conservative|Συντηρητικό')}</th><th>${P('Base|Βασικό')}</th><th>${P('Optimistic|Αισιόδοξο')}</th><th>${P('Source|Πηγή')}</th><th class='src'>${P('Basis|Βάση')}</th></tr>${GSC.map(x=>`<tr><td>${x[4]?`<input type='checkbox' id='g_inc_${x[0]}' checked onchange='grow()'>`:''}</td><td>${P(x[1])}</td>${[0,1,2].map(i=>`<td><input type='number' step='any' id='g_${x[0]}${i}' value='${x[2][i]}' oninput='grow()'></td>`).join('')}<td>${sel(x[0],'e')}</td><td class='src'>${P(x[3])}</td></tr>`).join('')}</table></div><div class='tw'><table id='gres'></table></div><div id='gch'></div><div id='gnote' class='hint'></div><button class='btn' onclick='gprint()'>${P('Print growth estimate|Εκτύπωση εκτίμησης ανάπτυξης')}</button>`;
+for(const k in old){const e=$(k);if(e){if(e.type=='checkbox')e.checked=old[k];else if(old[k]!==null){e.value=old[k];if(e.tagName=='TEXTAREA')e.dataset.d=1}}}
+grow()}
+let GOV={};
+function gR(){
+const g=id=>(+$('g_'+id).value||0)*(GOV[id]||1),rooms=Math.max(1,n('units')),fl=g('flow')/100,on=k=>$('c_'+k).checked,cdi=$('g_cdi').checked,prof=$('g_prof').checked,fte=$('g_smeth').value=='f';
+let rr=0,RR=0,NN=GN,FF=GF;
+if(prof){NN=0;for(let i=0;i<12;i++){const a=rooms*DM[i]*g('po'+i)/100;rr+=a;RR+=a*g('pa'+i);if(g('po'+i)>0)NN++}FF=$('offfee').value=='open'?NN:12;NN=Math.max(1,NN)}else{rr=rooms*30.4*GN*g('occ')/100;RR=rr*g('adr')}
+const stays=rr/Math.max(1,g('alos')),adrA=rr>0?RR/rr:g('adr');
+const gate=[on('chat')||on('out'),on('chat')||on('voice')||on('email')||on('comp'),on('chat')||on('email')||on('spaces'),on('comp')||on('spaces'),on('aiva'),cdi,on('chat')||on('voice')||on('email'),on('chat')||on('out')].map((x,j)=>x&&$('g_inc_'+LK[j]).checked);
+const mon=GM,rf=Math.max(0,(NN-g('ramp')/2)/NN);
+const R=[0,1,2].map(i=>{const s=k=>(+$('g_'+k+i).value||0)*(GOV[k]||1);
+const v=[RR*s('pp')/100*(g('ota')-g('dcost'))/100,fte?s('fte')*g('fcost')*NN:g('conv')*NN*s('au')/100*g('mins')/60*g('hr'),s('ld')*NN*g('gc')/100*g('gv')*fl,RR*s('an')/100*fl,s('vs')*NN*g('vm')/100-(Math.max(GA[1],GA[2]/100*s('vs'))*NN+GA[1]*Math.max(0,FF-NN))*(1-GD),stays*s('er')/100*g('ev')*g('ec')/100,g('miss')*NN*s('rec')/100*g('mconv')/100*adrA*g('alos')*fl,stays*s('cap')/100*s('rep')/100*adrA*g('alos')*fl].map((x,j)=>gate[j]?x:0);
+const tot=v.reduce((a,b)=>a+b,0),fees=mon*FF,an=tot-fees,unit=RR*(g('ota')-g('dcost'))/10000;
+return{v,tot,an,pb:an>0?GS/(an/12):null,y1:tot*rf-fees,cov:fees>0?tot/fees:null,be:gate[0]&&unit>0?Math.max(0,(fees-(tot-v[0]))/unit):null}});
+return{R,gate,mon,FF,NN,rooms,prof,RR,g}}
+function grow(){
+if(!$('g_occ'))return;
+GOV={};const {R,gate,mon,FF,NN,rooms,prof,RR,g}=gR();
+const row=(l,f,c)=>`<tr${c?` class='${c}'`:''}><td>${P(l)}</td>${R.map(r=>`<td>${f(r)}</td>`).join('')}</tr>`;
+let h=`<tr><th></th><th>${P('Conservative|Συντηρητικό')}</th><th>${P('Base|Βασικό')}</th><th>${P('Optimistic|Αισιόδοξο')}</th></tr>`;
+LV.forEach((l,j)=>h+=row(l,r=>gate[j]?fm(r.v[j]):'—'));
+h+=row('Total annual benefit|Συνολικό ετήσιο όφελος',r=>fm(r.tot),'tot')+row('Monthly fees|Μηνιαίες συνδρομές',()=>fm(-mon))+row('Annual fees (months charged)|Ετήσιες συνδρομές (μήνες χρέωσης)',()=>fm(-mon*FF))+row('Annual net impact, recurring (excl. one-off setup)|Ετήσια καθαρή επίδραση, επαναλαμβανόμενη (χωρίς εφάπαξ εγκατάσταση)',r=>fm(r.an),'hl')+row('Year-1 net incl. ramp-up (excl. setup)|Καθαρή επίδραση 1ου έτους με ramp-up (χωρίς εγκατάσταση)',r=>fm(r.y1))+row('Benefit ÷ fees (×)|Όφελος ÷ συνδρομές (×)',r=>r.cov==null?'—':r.cov.toFixed(2))+row('Break-even direct-booking shift (pp)|Break-even μετατόπιση σε απευθείας κρατήσεις (pp)',r=>r.be==null?'—':r.be.toFixed(1))+row('One-off setup (paid once)|Εφάπαξ εγκατάσταση (πληρώνεται μία φορά)',()=>fm(-GS))+row('Setup payback (calendar months)|Απόσβεση εγκατάστασης (ημερολογιακοί μήνες)',r=>r.pb==null?'—':r.pb.toFixed(1));
+$('gres').innerHTML=h;
+const base=R[1].an,tr=[];
+[...GB,...GSC].forEach(x=>{GOV={[x[0]]:0.8};const a=gR().R[1].an-base;GOV={[x[0]]:1.2};const b=gR().R[1].an-base;GOV={};const m=Math.max(Math.abs(a),Math.abs(b));if(m>1)tr.push([x[1],a,b,m])});
+tr.sort((x,y)=>y[3]-x[3]);const mx=tr.length?tr[0][3]:1;
+const TOR=`<h3 style='margin-top:12px'>${P('Sensitivity: base scenario, −20% / +20% on one assumption (annual net)|Ευαισθησία: βασικό σενάριο, −20% / +20% σε μία παραδοχή (ετήσιο καθαρό)')}</h3><table>${tr.slice(0,10).map(x=>`<tr><td>${P(x[0])}</td><td style='width:42%'><div style='display:flex;height:12px'><div style='width:50%;display:flex;justify-content:flex-end'><div style='width:${Math.max(0,-Math.min(x[1],x[2]))/mx*100}%;background:#c2255f'></div></div><div style='width:50%'><div style='width:${Math.max(0,Math.max(x[1],x[2]))/mx*100}%;background:#2e8b57'></div></div></div></td><td>${fm(x[1])} / ${fm(x[2])}</td></tr>`).join('')}</table>`;
+const lv=LV.map((l,j)=>[P(l),R[1].v[j]]).filter(x=>x[1]>0.5),bmax=Math.max(1,...lv.map(x=>x[1]));
+const BAR=`<h3 style='margin-top:12px'>${P('Annual benefit by source, base scenario|Ετήσιο όφελος ανά πηγή, βασικό σενάριο')}</h3><svg viewBox='0 0 600 ${lv.length*28+10}' width='100%' style='max-width:620px;color:inherit'>${lv.map((x,i)=>`<text x='0' y='${i*28+17}' font-size='11' fill='currentColor'>${esc(x[0].slice(0,44))}</text><rect x='270' y='${i*28+6}' width='${x[1]/bmax*230}' height='16' fill='#b8975a'/><text x='${276+x[1]/bmax*230}' y='${i*28+19}' font-size='11' fill='currentColor'>${fm(x[1])}</text>`).join('')}</svg>`;
+const cols=['#c2255f','#b8975a','#2e8b57'],pts=R.map(r=>{let c=-GS;const a=[c];for(let m=1;m<=24;m++){const f=g('ramp')>0?Math.min(1,m/g('ramp')):1;c+=r.tot/12*f-mon*FF/12;a.push(c)}return a}),flat=pts.flat(),lo=Math.min(0,...flat),hi=Math.max(1,...flat),X=m=>40+m*22.5,Y=v=>10+(hi-v)/(hi-lo||1)*170;
+const LINE=`<h3 style='margin-top:12px'>${P('Cumulative net cash after setup, 24 months (annualised, ignores timing of seasons)|Σωρευτική καθαρή ταμειακή ροή μετά την εγκατάσταση, 24 μήνες (ετησιοποιημένη, αγνοεί τη χρονική θέση των σεζόν)')}</h3><svg viewBox='0 0 600 222' width='100%' style='max-width:620px;color:inherit'><line x1='40' y1='${Y(0)}' x2='580' y2='${Y(0)}' stroke='currentColor' opacity='.4'/>${pts.map((a,i)=>`<polyline fill='none' stroke='${cols[i]}' stroke-width='2' points='${a.map((v,m)=>X(m)+','+Y(v)).join(' ')}'/>`).join('')}<text x='0' y='14' font-size='10' fill='currentColor'>${fm(hi)}</text><text x='0' y='${Y(lo)}' font-size='10' fill='currentColor'>${fm(lo)}</text>${[0,6,12,18,24].map(m=>`<text x='${X(m)-4}' y='196' font-size='10' fill='currentColor'>${m}</text>`).join('')}<text x='40' y='214' font-size='10' fill='currentColor'>${P('months|μήνες')}:  <tspan fill='${cols[0]}'>■</tspan> ${P('Conservative|Συντηρητικό')}  <tspan fill='${cols[1]}'>■</tspan> ${P('Base|Βασικό')}  <tspan fill='${cols[2]}'>■</tspan> ${P('Optimistic|Αισιόδοξο')}</text></svg>`;
+const CH=BAR+LINE+TOR;$('gch').innerHTML=CH;
+const ct=`<h3>${P('Success conditions|Προϋποθέσεις επιτυχίας')}</h3><p class='note' style='font-size:11px'>${esc($('g_cond').value).replace(/\n/g,'<br>')}</p>`;
+const ass=`<h3 style='margin-top:12px'>${P('Assumptions and sources|Παραδοχές και πηγές')}</h3><table>${GB.map(x=>`<tr><td>${P(x[1])}</td><td>${g(x[0])}</td><td>${srcL($('g_s_'+x[0]).value)}</td></tr>`).join('')}${GSC.map(x=>`<tr><td>${P(x[1])}</td><td>${[0,1,2].map(i=>g(x[0]+i)).join(' / ')}</td><td>${srcL($('g_s_'+x[0]).value)}</td></tr>`).join('')}</table>`;
+GQ=`<div style='page-break-before:always'><div class='qh'><div class='brand'>INVéSTIA Properties &nbsp;X&nbsp; myma.ai</div><h1>${P('Business case under conditions (illustrative)|Business case υπό προϋποθέσεις (ενδεικτικό)')}</h1></div><p class='note'>${esc($('pname').value)} · ${rooms} ${P('rooms|δωμάτια')} · ${prof?P('monthly profile|μηνιαίο προφίλ'):g('occ')+'%, ADR '+fm(g('adr'))} · ${NN} ${P('months open|μήνες λειτουργίας')}</p><table>${h}</table>${CH}${ct}${ass}<p class='note'>${P('Illustrative scenarios based on assumptions entered by INVéSTIA Properties. Not a forecast, guarantee or commitment; actual results vary by property. One-off setup is paid once and is not part of the recurring figures.|Ενδεικτικά σενάρια βάσει παραδοχών της INVéSTIA Properties. Δεν αποτελούν πρόβλεψη, εγγύηση ή δέσμευση· τα πραγματικά αποτελέσματα διαφέρουν ανά μονάδα. Η εγκατάσταση είναι εφάπαξ και δεν περιλαμβάνεται στα επαναλαμβανόμενα μεγέθη.')}</p></div>`;
+$('quote').innerHTML=QB+($('incg').checked?GQ:'');
+$('glink').textContent=P('Linked from pricing (net of discount, excl. VAT): setup |Από την τιμολόγηση (μετά την έκπτωση, χωρίς ΦΠΑ): εγκατάσταση ')+fm(GS)+P(', monthly |, μηνιαία ')+fm(mon);
+$('gnote').textContent=P('Month-to-month: the client can leave at any time. Staff savings count only if hours become fewer hires or overtime; never combine both methods. Revenue levers use the flow-through margin.|Μήνα-με-μήνα: ο πελάτης μπορεί να φύγει οποτεδήποτε. Η εξοικονόμηση προσωπικού μετράει μόνο αν οι ώρες γίνονται λιγότερες προσλήψεις ή υπερωρίες· ποτέ και οι δύο μέθοδοι μαζί. Οι παράγοντες εσόδων χρησιμοποιούν το περιθώριο κέρδους.')}
+function gprint(){document.body.className='pg';window.print();document.body.className=''}
+const SVN=['Content & menu setup in the platform (lists, menus, Knowledge Hub)|Δημιουργία περιεχομένου και μενού στην πλατφόρμα (λίστες, μενού, Knowledge Hub)','Content management (monthly)|Διαχείριση περιεχομένου (μηνιαία)','Marketing messages & campaigns (monthly)|Μηνύματα marketing και καμπάνιες (μηνιαία)','Cultural & Destination Intelligence – Core / Property layer (one-off)|Cultural & Destination Intelligence – Core / Property layer (εφάπαξ)','Cultural & Destination Intelligence – Live layer (monthly)|Cultural & Destination Intelligence – Live layer (μηνιαία)'];
+function svTxt(){if(!$('svh'))return;$('svh').textContent=P('Services invoiced by INVéSTIA Properties|Υπηρεσίες που τιμολογεί η INVéSTIA Properties');$('svhint').textContent=P('Separate from Myma’s fees: different invoice, different VAT. Enter your own prices; empty lines are not printed. Check VAT with your accountant.|Ξεχωριστές από τα τέλη της Myma: άλλο τιμολόγιο, άλλο ΦΠΑ. Βάλε τις δικές σου τιμές· οι κενές γραμμές δεν εκτυπώνονται. Έλεγξε το ΦΠΑ με τον λογιστή σου.');$('svn').textContent=P('Service|Υπηρεσία');$('svo').textContent=P('One-off (€)|Εφάπαξ (€)');$('svm').textContent=P('Monthly (€)|Μηνιαία (€)');$('svatl').textContent=P('VAT on INVéSTIA services|ΦΠΑ υπηρεσιών INVéSTIA');$('svatpl').textContent=P('Rate (%)|Συντελεστής (%)');
+const o=$('svat').options;o[0].text=P('Client in Greece – 24% (verify)|Πελάτης στην Ελλάδα – 24% (προς επιβεβαίωση)');o[1].text=P('Business in another EU state – reverse charge 0% (verify)|Επιχείρηση σε άλλο κράτος ΕΕ – αντίστροφη χρέωση 0% (προς επιβεβαίωση)');o[2].text=P('Outside the EU – 0% (verify)|Εκτός ΕΕ – 0% (προς επιβεβαίωση)');o[3].text=P('Custom|Προσαρμοσμένος');SVN.forEach((x,i)=>{const e=$('sv_n'+i);if(!e.dataset.d)e.value=P(x)})}
+function svSel(){const v=$('svat').value;if(v=='gr')$('svatp').value=24;else if(v=='rc'||v=='neu')$('svatp').value=0;calc()}
+function svc(){if(!$('sv_c0'))return{rows:[],so:0,sm:0,vr:0};const rows=[];for(let i=0;i<5;i++){if(!$('sv_c'+i).checked)continue;const so=+$('sv_s'+i).value||0,sm=+$('sv_m'+i).value||0;if(so||sm)rows.push({n:$('sv_n'+i).value,so,sm})}
+return{rows,so:rows.reduce((a,r)=>a+r.so,0),sm:rows.reduce((a,r)=>a+r.sm,0),vr:(+$('svatp').value||0)/100}}
+function svcHTML(){const v=svc();if(!v.rows.length)return'';const chM=$('offfee').value=='open'?Math.min(12,Math.max(1,n('mopen')||12)):12;
+return `<h3 style='margin-top:14px'>${P('Services invoiced by INVéSTIA Properties (separate from Myma)|Υπηρεσίες που τιμολογεί η INVéSTIA Properties (ξεχωριστά από τη Myma)')}</h3><table><tr><th>${P('Service|Υπηρεσία')}</th><th>${P('One-off|Εφάπαξ')}</th><th>${P('Monthly|Μηνιαία')}</th></tr>${v.rows.map(r=>`<tr><td>${esc(r.n)}</td><td>${r.so?f(r.so):'—'}</td><td>${r.sm?f(r.sm):'—'}</td></tr>`).join('')}<tr><td><b>${t('tot')} (${t('net')})</b></td><td><b>${f(v.so)}</b></td><td><b>${f(v.sm)}</b></td></tr>${v.vr?`<tr><td>${P('incl. VAT|με ΦΠΑ')} ${(v.vr*100).toFixed(0)}%</td><td>${f(v.so*(1+v.vr))}</td><td>${f(v.sm*(1+v.vr))}</td></tr>`:''}<tr><td>${t('rec')} × ${chM} ${t('mon_')} (${t('net')})</td><td></td><td>${f(v.sm*chM)}</td></tr></table><p class='note'>${P('These services are provided and invoiced by INVéSTIA Properties under a separate agreement with the hotel. The setup fee is paid once.|Οι υπηρεσίες αυτές παρέχονται και τιμολογούνται από την INVéSTIA Properties με ξεχωριστή συμφωνία με το ξενοδοχείο. Η εγκατάσταση πληρώνεται μία φορά.')}</p>`}
+function vatSel(){if($('vreg').value=='my')$('vaton').checked=false;calc()}
+function termsHTML(){const days=n('qvalid'),vd=new Date(Date.now()+days*864e5).toLocaleDateString(L=='el'?'el-GR':'en-GB'),li=[];
+if(days)li.push(t('validuntil')+': '+vd);if($('qnot').value)li.push(t('noticeT')+': '+$('qnot').value+' '+P('days|ημέρες'));if($('qpay').value)li.push(t('payT')+': '+esc($('qpay').value));li.unshift(t('tmyma'));if($('vreg').value=='my')li.push(t('vmynote'));
+const ln='border-bottom:1px solid #999;height:34px';
+return `<h3 style='margin-top:14px'>${t('terms')}</h3><p class='note' style='font-size:11px'>${li.join('<br>')||'—'}</p><h3 style='margin-top:14px'>${t('accT')}</h3><div style='display:grid;grid-template-columns:2fr 1fr 2fr;gap:16px;font-size:11px;margin-top:6px'><div><div style='${ln}'></div>${t('accN')}</div><div><div style='${ln}'></div>${t('accD')}</div><div><div style='${ln}'></div>${t('accS')}</div></div>`}
+const OK='inv_offers_v1';
+function offGet(){try{return JSON.parse(localStorage.getItem(OK)||'{}')}catch(e){return null}}
+function offUI(){const keep=($('oname')||{}).value||'',ks=offGet(),sv=($('osel')||{}).value;
+$('offers').innerHTML=`<input type='text' id='oname' placeholder='${P('Offer name (e.g. hotel)|Όνομα προσφοράς (π.χ. ξενοδοχείο)')}' style='max-width:240px' value='${esc(keep)}'> <button class='btn' style='margin-top:0' onclick='offSave()'>${P('Save|Αποθήκευση')}</button> <select id='osel' style='max-width:240px'>${ks?Object.keys(ks).map(k=>`<option>${esc(k)}</option>`).join(''):''}</select> <button class='btn' style='margin-top:0' onclick='offLoad()'>${P('Load|Φόρτωση')}</button> <button class='btn' style='margin-top:0' onclick='offDel()'>${P('Delete|Διαγραφή')}</button> <span id='omsg' class='hint'>${ks?P('Saved in this browser only.|Αποθηκεύεται μόνο σε αυτόν τον περιηγητή.'):P('Browser storage is not available here.|Η αποθήκευση περιηγητή δεν είναι διαθέσιμη εδώ.')}</span>`;if(sv)$('osel').value=sv}
+function offSave(){const nm=$('oname').value.trim()||$('pname').value.trim(),ks=offGet();if(!nm||!ks)return;const o={};
+document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>{if(!e.id||['oname','osel','impt'].includes(e.id))return;o[e.id]=e.type=='checkbox'?e.checked:e.value;if(e.tagName=='TEXTAREA')o[e.id+'#d']=e.dataset.d||''});
+ks[nm]=o;try{localStorage.setItem(OK,JSON.stringify(ks));offUI();$('osel').value=nm;$('omsg').textContent=P('Saved|Αποθηκεύτηκε')}catch(e){$('omsg').textContent=P('Could not save|Αποτυχία αποθήκευσης')}}
+function offLoad(){const ks=offGet(),o=ks&&ks[$('osel').value];if(!o)return;for(const k in o){if(k.endsWith('#d'))continue;const e=$(k);if(!e)continue;if(e.type=='checkbox')e.checked=o[k];else e.value=o[k];if(e.tagName=='TEXTAREA'&&o[k+'#d'])e.dataset.d=1}calc();$('omsg').textContent=P('Loaded|Φορτώθηκε')}
+function offDel(){const ks=offGet(),k=$('osel').value;if(!ks||!ks[k])return;delete ks[k];try{localStorage.setItem(OK,JSON.stringify(ks))}catch(e){}offUI()}
+function impData(){try{const o=JSON.parse($('impt').value.replace(/^\s*INV1:/,'')),mp={pname:'pname',legal:'legal',afm:'afm',addr:'addr',cname:'cname',cmail:'cmail',cphone:'cphone',rooms:'units',mopen:'mopen',occ:'g_occ',adr:'g_adr',ota:'g_ota',alos:'g_alos',conv:'g_conv',hr:'g_hr',fcost:'g_fcost',miss:'g_miss',gv:'g_gv'};let c=0;
+for(const k in mp){if(o[k]!==undefined&&o[k]!==''){const e=$(mp[k]);if(e){e.value=o[k];c++;if(mp[k].startsWith('g_')){const sl=$('g_s_'+mp[k].slice(2));if(sl)sl.value='h'}}}}
+calc();$('impm').textContent=P('Imported fields: |Εισήχθησαν πεδία: ')+c}catch(e){$('impm').textContent=P('Could not read the data.|Δεν διαβάστηκαν τα δεδομένα.')}}
+$('qno').value='INV-'+new Date().toISOString().slice(0,10).replace(/-/g,'');
+['acomm','amin','dison','disp','dis_s','dis_m','qno','qvalid','qnot','qpay','vreg','vat','vaton'].forEach(id=>{const e=$(id);if(e)e.closest('div').style.display='none'});
+$('qvalid').value=0;
+const ah=document.querySelector('[data-i=ahint]');if(ah)ah.style.display='none';
+setL('el');
+</script></body></html>
